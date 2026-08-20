@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Universe — Advanced Three.js Scene</title>
+    <link rel="stylesheet" href="Style.css">
+</head>
+
+<body>
+
+
+    <!-- CUSTOM LOADER -->
+    <div id="loader">
+        <div class="loader-core">
+            <div class="loader-ring" id="loaderRing"></div>
+            <div class="loader-percent" id="loaderPercent">0%</div>
+        </div>
+        <div class="loader-label">Initializing Universe</div>
+    </div>
+
+
+    <canvas id="bg"></canvas>
+
+
+    <!-- HERO -->
+    <section id="hero">
+        <div class="overlay">
+            <h1>PARTICALE UNIVERSE</h1>
+            <p>A shader-driven 3D galaxy built with Three.js</p>
+        </div>
+        <div id="hint">Move your mouse • Drag to rotate • Scroll to fly through</div>
+        <div class="scrollCue">
+            <span></span>
+            <p>Scroll</p>
+        </div>
+    </section>
+
+
+    <!-- FEATURES -->
+    <main>
+        <section class="intro reveal">
+            <h2>Every effect is <span class="grad-text">real-time GLSL</span></h2>
+            <p>No pre-rendered video — the sphere's liquid surface, the particle drift, and the cinematic glow are all
+                computed live on the GPU, frame by frame.</p>
+        </section>
+
+        <section class="features">
+            <div class="card reveal">
+                <div class="icon">🪐</div>
+                <h3>Liquid Shader Sphere</h3>
+                <p>A custom vertex shader distorts the core in real time using simplex noise, with a fresnel-lit neon
+                    rim in the fragment shader.</p>
+            </div>
+            <div class="card reveal">
+                <div class="icon">💍</div>
+                <h3>Rings &amp; Dynamic Lights</h3>
+                <p>Two counter-rotating rings catch the light from three colored point lights orbiting the scene on
+                    independent paths</p>
+            </div>
+            <div class="card reveal">
+                <div class="icon">🌫️</div>
+                <h3>Volumetric Fog</h3>
+                <p>Exponential fog fades distant particles into the void, adding real depth to the field.</p>
+            </div>
+            <div class="card reveal">
+                <div class="icon">🖱️</div>
+                <h3>Mouse &amp; Scroll Camera</h3>
+                <p>The camera drifts with your cursor and flies through the scene as you scroll — two motion systems,
+                    one smooth path.</p>
+            </div>
+            <div class="card reveal">
+                <div class="icon">🎬</div>
+                <h3>>Cinematic Post-Processing</h3>
+                <p>UnrealBloomPass plus a custom shader pass add glow, vignette, chromatic aberration, and film grain.
+                </p>
+            </div>
+            <div class="card reveal">
+                <div class="icon">🛰️</div>
+                <h3>Interactive Satellites</h3>
+                <p>Small orbiting models light up under raycasted hover and pulse on click — true 3D interactivity, not
+                    just visuals</p>
+            </div>
+        </section>
+
+
+        <sectioon class="cta-reveal">
+            <h2>Ready to build your own?</h2>
+            <p>Fork this scene, rewrite the shaders, and make the universe yours.</p>
+        </sectioon>
+    </main>
+
+
+    <!-- Three.js core -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Post-processing addons -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/ShaderPass.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
