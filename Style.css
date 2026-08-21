@@ -309,11 +309,11 @@ section {
 .card {
     padding: 35px;
     min-height: 260px;
-    border: 1px solid rgba(255, 255, 255, .08);
+    border: 1px solid rgba(139, 92, 255, .18);
     border-radius: 25px;
-    background: linear-gradient(145deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .015));
+    background: linear-gradient(160deg, rgba(18, 14, 40, .9), rgba(4, 5, 14, .95));
     backdrop-filter: blur(15px);
-    transition: transform .15s ease-out, border-color .45s, box-shadow .45s;
+    transition: transform .15s ease-out, border-color .45s, box-shadow .45s, background .45s;
     position: relative;
     overflow: hidden;
 }
@@ -321,18 +321,20 @@ section {
 .card::before {
     content: "";
     position: absolute;
-    width: 200px;
-    height: 200px;
-    background: #00d9ff;
-    filter: blur(100px);
-    opacity: .08;
-    top: -100px;
-    right: -100px;
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle, #8b5cff, transparent 70%);
+    filter: blur(70px);
+    opacity: .22;
+    top: -110px;
+    right: -110px;
+    pointer-events: none;
 }
 
 .card:hover {
-    border-color: rgba(255, 255, 255, .2);
-    box-shadow: 0 25px 80px rgba(0, 0, 0, .4), 0 0 30px rgba(0, 200, 255, .06);
+    border-color: rgba(0, 217, 255, .4);
+    background: linear-gradient(160deg, rgba(24, 18, 52, .95), rgba(6, 7, 18, .98));
+    box-shadow: 0 25px 80px rgba(0, 0, 0, .55), 0 0 40px rgba(0, 217, 255, .12);
 }
 
 .icon {
@@ -342,7 +344,8 @@ section {
     display: grid;
     place-items: center;
     font-size: 25px;
-    background: rgba(255, 255, 255, .07);
+    background: rgba(139, 92, 255, .12);
+    border: 1px solid rgba(139, 92, 255, .2);
     margin-bottom: 25px;
 }
 
