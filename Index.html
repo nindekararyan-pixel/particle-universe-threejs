@@ -5,11 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Particle Universe — Advanced Three.js Scene</title>
-    <link rel="stylesheet" href="Style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-
 
     <!-- CUSTOM LOADER -->
     <div id="loader">
@@ -20,23 +19,20 @@
         <div class="loader-label">Initializing Universe</div>
     </div>
 
-
     <canvas id="bg"></canvas>
-
 
     <!-- HERO -->
     <section id="hero">
-        <div class="overlay">
-            <h1>PARTICALE UNIVERSE</h1>
+        <div id="overlay">
+            <h1>PARTICLE UNIVERSE</h1>
             <p>A shader-driven 3D galaxy built with Three.js</p>
         </div>
         <div id="hint">Move your mouse • Drag to rotate • Scroll to fly through</div>
-        <div class="scrollCue">
+        <div id="scrollCue">
             <span></span>
             <p>Scroll</p>
         </div>
     </section>
-
 
     <!-- FEATURES -->
     <main>
@@ -48,16 +44,28 @@
 
         <section class="features">
             <div class="card reveal">
-                <div class="icon"></div>
+                <div class="icon">🪐</div>
                 <h3>Liquid Shader Sphere</h3>
                 <p>A custom vertex shader distorts the core in real time using simplex noise, with a fresnel-lit neon
                     rim in the fragment shader.</p>
             </div>
             <div class="card reveal">
+                <div class="icon">🔷</div>
+                <h3>Wireframe Energy Shell</h3>
+                <p>A pulsing wireframe shell wraps the liquid core, breathing in and out as the sphere deforms beneath
+                    it.</p>
+            </div>
+            <div class="card reveal">
+                <div class="icon">✨</div>
+                <h3>3,000-Particle Galaxy</h3>
+                <p>A GPU-animated point cloud drifts through space using per-vertex shader displacement — zero CPU
+                    overhead per frame.</p>
+            </div>
+            <div class="card reveal">
                 <div class="icon">💍</div>
                 <h3>Rings &amp; Dynamic Lights</h3>
                 <p>Two counter-rotating rings catch the light from three colored point lights orbiting the scene on
-                    independent paths</p>
+                    independent paths.</p>
             </div>
             <div class="card reveal">
                 <div class="icon">🌫️</div>
@@ -72,7 +80,7 @@
             </div>
             <div class="card reveal">
                 <div class="icon">🎬</div>
-                <h3>>Cinematic Post-Processing</h3>
+                <h3>Cinematic Post-Processing</h3>
                 <p>UnrealBloomPass plus a custom shader pass add glow, vignette, chromatic aberration, and film grain.
                 </p>
             </div>
@@ -80,17 +88,15 @@
                 <div class="icon">🛰️</div>
                 <h3>Interactive Satellites</h3>
                 <p>Small orbiting models light up under raycasted hover and pulse on click — true 3D interactivity, not
-                    just visuals</p>
+                    just visuals.</p>
             </div>
         </section>
 
-
-        <sectioon class="cta-reveal">
+        <section class="cta reveal">
             <h2>Ready to build your own?</h2>
             <p>Fork this scene, rewrite the shaders, and make the universe yours.</p>
-        </sectioon>
+        </section>
     </main>
-
 
     <!-- Three.js core -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
