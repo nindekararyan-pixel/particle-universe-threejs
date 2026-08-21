@@ -107,4 +107,66 @@ body {
     background-size: 300% auto;
     -webkit-background-clip: text;
     background-clip: text;
+    color: transparent;
+    animation: shine 5s linear infinite;
+    text-shadow: 0 0 40px rgba(124, 77, 255, 0.4);
+}
+
+#overlay p {
+    margin-top: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: clamp(0.75rem, 2vw, 0.95rem);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+@keyframes shine {
+    to {
+        background-position: 300% center;
+    }
+}
+
+#hint {
+    position: absolute;
+    bottom: 90px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    z-index: 2;
+}
+
+#scrollCue {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+}
+
+#scrollCue span {
+    width: 22px;
+    height: 36px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-radius: 14px;
+    position: relative;
+}
+
+#scrollCue span::before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    width: 4px;
+    height: 8px;
+    background: #48c6ef;
+    border-radius: 2px;
+    transform: 2px;
+    transform: translateX(-50%);
+    animation: scrollDot 1.6s ease-in-out infinite;
 }
