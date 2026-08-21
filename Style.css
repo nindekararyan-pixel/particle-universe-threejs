@@ -327,7 +327,10 @@ section {
     padding: 1.5px;
     background: conic-gradient(from 0deg, var(--accent, #00d9ff), transparent 35%, var(--accent, #00d9ff) 100%);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     mask-composite: exclude;
     opacity: .55;
     animation: cardSpin 5s linear infinite;
@@ -425,10 +428,10 @@ section {
     width: min(900px, 100%);
     padding: 80px 30px;
     border-radius: 35px;
-    border: 1px solid rgba(255, 255, 255, .1);
-    background:
-        radial-gradient(circle at 50% 0%, rgba(0, 217, 255, .12), transparent 45%),
-        rgba(255, 255, 255, .025);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: linear-gradient(160deg, rgba(20, 16, 44, .96), rgba(5, 6, 16, .98));
     backdrop-filter: blur(20px);
     box-shadow: 0 30px 100px rgba(0, 0, 0, .55);
 }
@@ -471,7 +474,7 @@ section {
 }
 
 .cta-box p {
-    color: #888;
+    color: #aaadc0;
     max-width: 600px;
     margin: auto auto 30px;
     line-height: 1.7;
