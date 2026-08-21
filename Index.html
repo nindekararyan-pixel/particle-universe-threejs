@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Particle Universe — Advanced Three.js Scene</title>
+    <title>3D Motion — Advanced Three.js Experience</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -16,87 +16,116 @@
             <div class="loader-ring" id="loaderRing"></div>
             <div class="loader-percent" id="loaderPercent">0%</div>
         </div>
-        <div class="loader-label">Initializing Universe</div>
+        <div class="loader-label">Initializing Experience</div>
     </div>
 
-    <canvas id="bg"></canvas>
+    <div id="canvas-container"></div>
 
-    <!-- HERO -->
-    <section id="hero">
-        <div id="overlay">
-            <h1>PARTICLE UNIVERSE</h1>
-            <p>A shader-driven 3D galaxy built with Three.js</p>
-        </div>
-        <div id="hint">Move your mouse • Drag to rotate • Scroll to fly through</div>
-        <div id="scrollCue">
-            <span></span>
-            <p>Scroll</p>
-        </div>
-    </section>
+    <nav>
+        <div class="logo"><span>3D</span> MOTION</div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#experience">Experience</a></li>
+        </ul>
+    </nav>
 
-    <!-- FEATURES -->
     <main>
-        <section class="intro reveal">
-            <h2>Every effect is <span class="grad-text">real-time GLSL</span></h2>
-            <p>No pre-rendered video — the sphere's liquid surface, the particle drift, and the cinematic glow are all
-                computed live on the GPU, frame by frame.</p>
-        </section>
 
-        <section class="features">
-            <div class="card reveal">
-                <div class="icon">🪐</div>
-                <h3>Liquid Shader Sphere</h3>
-                <p>A custom vertex shader distorts the core in real time using simplex noise, with a fresnel-lit neon
-                    rim in the fragment shader.</p>
-            </div>
-            <div class="card reveal">
-                <div class="icon">🔷</div>
-                <h3>Wireframe Energy Shell</h3>
-                <p>A pulsing wireframe shell wraps the liquid core, breathing in and out as the sphere deforms beneath
-                    it.</p>
-            </div>
-            <div class="card reveal">
-                <div class="icon">✨</div>
-                <h3>3,000-Particle Galaxy</h3>
-                <p>A GPU-animated point cloud drifts through space using per-vertex shader displacement — zero CPU
-                    overhead per frame.</p>
-            </div>
-            <div class="card reveal">
-                <div class="icon">💍</div>
-                <h3>Rings &amp; Dynamic Lights</h3>
-                <p>Two counter-rotating rings catch the light from three colored point lights orbiting the scene on
-                    independent paths.</p>
-            </div>
-            <div class="card reveal">
-                <div class="icon">🌫️</div>
-                <h3>Volumetric Fog</h3>
-                <p>Exponential fog fades distant particles into the void, adding real depth to the field.</p>
-            </div>
-            <div class="card reveal">
-                <div class="icon">🖱️</div>
-                <h3>Mouse &amp; Scroll Camera</h3>
-                <p>The camera drifts with your cursor and flies through the scene as you scroll — two motion systems,
-                    one smooth path.</p>
-            </div>
-            <div class="card reveal">
-                <div class="icon">🎬</div>
-                <h3>Cinematic Post-Processing</h3>
-                <p>UnrealBloomPass plus a custom shader pass add glow, vignette, chromatic aberration, and film grain.
+        <section class="hero" id="home">
+            <div class="hero-content reveal">
+                <div class="badge"><i></i> NEXT GENERATION WEB EXPERIENCE</div>
+
+                <h1>Explore<br><span class="gradient-text">3D Motion.</span></h1>
+
+                <p>
+                    A shader-driven, GPU-animated universe — liquid distortion,
+                    cinematic bloom, and a camera that flies through the scene
+                    as you scroll.
                 </p>
+
+                <div class="buttons">
+                    <a href="#experience" class="btn btn-primary">Explore Experience →</a>
+                    <a href="#features" class="btn btn-secondary">Discover More</a>
+                </div>
             </div>
-            <div class="card reveal">
-                <div class="icon">🛰️</div>
-                <h3>Interactive Satellites</h3>
-                <p>Small orbiting models light up under raycasted hover and pulse on click — true 3D interactivity, not
-                    just visuals.</p>
+
+            <div class="stats">
+                <div class="stat">
+                    <h3>3,000</h3>
+                    <p>GPU Particles</p>
+                </div>
+                <div class="stat">
+                    <h3>6</h3>
+                    <p>Interactive Satellites</p>
+                </div>
+                <div class="stat">
+                    <h3>60fps</h3>
+                    <p>Real-Time Render</p>
+                </div>
             </div>
         </section>
 
-        <section class="cta reveal">
-            <h2>Ready to build your own?</h2>
-            <p>Fork this scene, rewrite the shaders, and make the universe yours.</p>
+        <section id="features">
+            <div class="section-title reveal">
+                <span>WHY 3D?</span>
+                <h2>Build beyond <span class="gradient-text">limits.</span></h2>
+            </div>
+
+            <div class="cards">
+                <div class="card reveal">
+                    <div class="icon">🪐</div>
+                    <h3>Liquid Shader Sphere</h3>
+                    <p>A custom GLSL vertex shader deforms the core in real time using simplex noise — a living surface,
+                        not a static mesh.</p>
+                </div>
+
+                <div class="card reveal">
+                    <div class="icon">🛰️</div>
+                    <h3>Interactive Satellites</h3>
+                    <p>Six orbiting models respond to raycasted hover with a glow and scale, and pulse when clicked.</p>
+                </div>
+
+                <div class="card reveal">
+                    <div class="icon">💫</div>
+                    <h3>Cinematic Bloom</h3>
+                    <p>UnrealBloomPass plus a custom shader pass add vignette, chromatic aberration, and film grain.</p>
+                </div>
+
+                <div class="card reveal">
+                    <div class="icon">✨</div>
+                    <h3>GPU Particle Field</h3>
+                    <p>3,000 particles drift through space, animated entirely on the GPU for zero per-frame CPU cost.
+                    </p>
+                </div>
+
+                <div class="card reveal">
+                    <div class="icon">🖱️</div>
+                    <h3>Mouse &amp; Scroll Camera</h3>
+                    <p>The camera drifts with your cursor and dollies through the scene as you scroll — two motion
+                        systems, one path.</p>
+                </div>
+
+                <div class="card reveal">
+                    <div class="icon">◈</div>
+                    <h3>Dynamic Lighting</h3>
+                    <p>Colored point lights orbit independently, catching the wireframe shell and floating rings as they
+                        pass.</p>
+                </div>
+            </div>
         </section>
+
+        <section class="cta" id="experience">
+            <div class="cta-box reveal">
+                <h2>Ready to create <span class="gradient-text">magic?</span></h2>
+                <p>Three dimensions. Infinite possibilities. Your next web experience starts here.</p>
+                <a href="#home" class="btn btn-primary">Start Exploring ✦</a>
+            </div>
+        </section>
+
     </main>
+
+    <footer>© 2026 3D Motion Experience · Built with Three.js</footer>
 
     <!-- Three.js core -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

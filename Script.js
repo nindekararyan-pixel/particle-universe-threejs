@@ -1,51 +1,55 @@
 /* ==========================================================
-   ADVANCED THREE.JS SCENE — Particle Universe
-   Liquid shader sphere · wireframe shell · 3,000 particles
-   rings · dynamic lights · fog · mouse + scroll camera
-   interactive satellites · cinematic post-processing · loader
+   ADVANCED THREE.JS SCENE — 3D Motion Experience
+   Liquid shader sphere · wireframe shell · 3,000 GPU particles
+   floating rings · dynamic lights · interactive satellites
+   cinematic post-processing · mouse + scroll camera · loader
    ========================================================== */
 
 let scene, camera, renderer, composer, cinematicPass;
-let sphereGroup, sphereMat, shellMesh;
-let particleSystem, ring1, ring2;
+let sphereGroup, sphereMat, wireSphere;
+let particles, rings = [];
 let satellites = [];
 let raycaster, ndcMouse;
 let hoveredSatellite = null;
 
 let mouseX = 0, mouseY = 0;
 let targetRotX = 0, targetRotY = 0;
-let dragging = false, lastX = 0, lastY = 0, camDist = 14;
+let dragging = false, lastX = 0, lastY = 0, camDist = 7;
+
+const anchor = new THREE.Vector3(2.1, 0.1, 0); // main sphere sits off-center, matching the hero layout
 const clock = new THREE.Clock();
 
 initScene();
 runLoader();
 animate();
 initScrollReveal();
+initCardTilt();
 
 /* ==========================================================
    SCENE SETUP
    ========================================================== */
 function initScene() {
-    const canvas = document.getElementById('bg');
+    const container = document.getElementById('canvas-container');
 
     scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x05010f, 0.021);
+    scene.fog = new THREE.FogExp2(0x02030a, 0.035);
 
-    camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 2, camDist);
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.z = camDist;
 
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.1;
+    container.appendChild(renderer.domElement);
 
     buildLights();
     buildLiquidSphere();
     buildWireframeShell();
+    buildParticleField();
     buildRings();
-    buildParticleGalaxy();
     buildSatellites();
     buildComposer();
     bindEvents();
@@ -53,34 +57,29 @@ function initScene() {
 
 /* ---------- Dynamic lights ---------- */
 function buildLights() {
-    const ambient = new THREE.AmbientLight(0x332255, 1.1);
-    scene.add(ambient);
+    scene.add(new THREE.AmbientLight(0x6d5cff, 1.5));
 
-    const l1 = new THREE.PointLight(0xff59d6, 3, 40);
-    l1.position.set(6, 5, 6);
+    const l1 = new THREE.PointLight(0x00d9ff, 25, 15);
+    l1.position.set(3, 3, 4);
     scene.add(l1);
 
-    const l2 = new THREE.PointLight(0x4dd8ff, 3, 40);
-    l2.position.set(-6, -4, -4);
+    const l2 = new THREE.PointLight(0xff20d0, 20, 15);
+    l2.position.set(-4, -2, 3);
     scene.add(l2);
 
-    const l3 = new THREE.PointLight(0x9d6bff, 2.5, 40);
-    l3.position.set(0, 6, -6);
-    scene.add(l3);
-
-    window.__lights = [l1, l2, l3];
+    window.__lights = [l1, l2];
 }
 
 /* ---------- Liquid GLSL shader sphere ---------- */
 function buildLiquidSphere() {
-    const geo = new THREE.IcosahedronGeometry(2.1, 5);
+    const geo = new THREE.IcosahedronGeometry(1.65, 5);
 
     sphereMat = new THREE.ShaderMaterial({
         uniforms: {
             uTime: { value: 0 },
-            uDistort: { value: 0.35 },
-            uColorA: { value: new THREE.Color(0xff3fd8) },
-            uColorB: { value: new THREE.Color(0x4dd8ff) }
+            uDistort: { value: 0.28 },
+            uColorA: { value: new THREE.Color(0x8b5cff) },
+            uColorB: { value: new THREE.Color(0x00d9ff) }
         },
         vertexShader: `
       uniform float uTime;
@@ -89,7 +88,6 @@ function buildLiquidSphere() {
       varying vec3 vPosition;
       varying float vNoise;
 
-      // --- Ashima simplex noise (3D) ---
       vec3 mod289(vec3 x){ return x - floor(x * (1.0/289.0)) * 289.0; }
       vec4 mod289(vec4 x){ return x - floor(x * (1.0/289.0)) * 289.0; }
       vec4 permute(vec4 x){ return mod289(((x*34.0)+1.0)*x); }
@@ -175,8 +173,8 @@ function buildLiquidSphere() {
         float fresnel = pow(1.0 - max(dot(viewDir, normalize(vNormal)), 0.0), 2.4);
 
         vec3 baseColor = mix(uColorA, uColorB, (vNoise + 1.0) * 0.5);
-        vec3 glow = baseColor * fresnel * 2.2;
-        vec3 finalColor = baseColor * 0.35 + glow;
+        vec3 glow = baseColor * fresnel * 2.0;
+        vec3 finalColor = baseColor * 0.4 + glow;
 
         gl_FragColor = vec4(finalColor, 1.0);
       }
@@ -186,64 +184,46 @@ function buildLiquidSphere() {
     const core = new THREE.Mesh(geo, sphereMat);
     sphereGroup = new THREE.Group();
     sphereGroup.add(core);
+    sphereGroup.position.copy(anchor);
     scene.add(sphereGroup);
 }
 
 /* ---------- Wireframe energy shell ---------- */
 function buildWireframeShell() {
-    const geo = new THREE.IcosahedronGeometry(2.5, 1);
+    const geo = new THREE.IcosahedronGeometry(1.78, 3);
     const mat = new THREE.MeshBasicMaterial({
-        color: 0x7fe7ff,
+        color: 0x00d9ff,
         wireframe: true,
         transparent: true,
-        opacity: 0.5
+        opacity: 0.2
     });
-    shellMesh = new THREE.Mesh(geo, mat);
-    sphereGroup.add(shellMesh);
+    wireSphere = new THREE.Mesh(geo, mat);
+    wireSphere.position.copy(anchor);
+    scene.add(wireSphere);
 }
 
-/* ---------- Orbiting rings ---------- */
-function buildRings() {
-    ring1 = makeRing(3.5, 0xff6ec7, 0.02);
-    ring1.rotation.x = Math.PI / 2.2;
-    scene.add(ring1);
-
-    ring2 = makeRing(4.2, 0x4dd8ff, 0.015);
-    ring2.rotation.x = Math.PI / 3;
-    ring2.rotation.y = Math.PI / 4;
-    scene.add(ring2);
-
-    function makeRing(radius, color, tube) {
-        const geo = new THREE.TorusGeometry(radius, tube, 16, 120);
-        const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.85 });
-        return new THREE.Mesh(geo, mat);
-    }
-}
-
-/* ---------- 3,000-particle GPU galaxy ---------- */
-function buildParticleGalaxy() {
+/* ---------- GPU-animated particle field ---------- */
+function buildParticleField() {
     const count = 3000;
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
     const sizes = new Float32Array(count);
 
     const palette = [
-        new THREE.Color(0xff6ec7),
-        new THREE.Color(0x7c4dff),
-        new THREE.Color(0x48c6ef),
-        new THREE.Color(0xffe66d),
-        new THREE.Color(0x6effb0)
+        new THREE.Color(0x00d9ff),
+        new THREE.Color(0x8b5cff),
+        new THREE.Color(0xff36c8),
+        new THREE.Color(0x55ddff)
     ];
 
     for (let i = 0; i < count; i++) {
-        const radius = 5 + Math.random() * 24;
+        const radius = 4 + Math.random() * 10;
         const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos(Math.random() * 2 - 1);
-        const flatten = Math.random() < 0.7 ? 0.35 : 1;
+        const phi = Math.acos(2 * Math.random() - 1);
 
         positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-        positions[i * 3 + 1] = radius * Math.cos(phi) * flatten * 0.4;
-        positions[i * 3 + 2] = radius * Math.sin(phi) * Math.sin(theta);
+        positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        positions[i * 3 + 2] = radius * Math.cos(phi);
 
         const c = palette[Math.floor(Math.random() * palette.length)];
         colors[i * 3] = c.r;
@@ -273,12 +253,12 @@ function buildParticleGalaxy() {
       void main() {
         vColor = color;
         vec3 pos = position;
-        pos.x += sin(uTime * 0.35 + position.z * 0.4) * 0.6;
-        pos.y += cos(uTime * 0.3 + position.x * 0.4) * 0.6;
-        pos.z += sin(uTime * 0.25 + position.y * 0.4) * 0.6;
+        pos.x += sin(uTime * 0.3 + position.z * 0.4) * 0.4;
+        pos.y += cos(uTime * 0.25 + position.x * 0.4) * 0.4;
+        pos.z += sin(uTime * 0.2 + position.y * 0.4) * 0.4;
 
         vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-        gl_PointSize = aSize * uPixelRatio * (260.0 / -mvPosition.z);
+        gl_PointSize = aSize * uPixelRatio * (120.0 / -mvPosition.z);
         gl_Position = projectionMatrix * mvPosition;
       }
     `,
@@ -288,7 +268,7 @@ function buildParticleGalaxy() {
         float d = length(gl_PointCoord - vec2(0.5));
         if (d > 0.5) discard;
         float glow = smoothstep(0.5, 0.0, d);
-        gl_FragColor = vec4(vColor, glow);
+        gl_FragColor = vec4(vColor, glow * 0.85);
       }
     `,
         transparent: true,
@@ -296,29 +276,48 @@ function buildParticleGalaxy() {
         blending: THREE.AdditiveBlending
     });
 
-    particleSystem = new THREE.Points(geo, mat);
-    scene.add(particleSystem);
+    particles = new THREE.Points(geo, mat);
+    scene.add(particles);
+}
+
+/* ---------- Floating rings ---------- */
+function buildRings() {
+    for (let i = 0; i < 5; i++) {
+        const ring = new THREE.Mesh(
+            new THREE.TorusGeometry(2.1 + i * 0.25, 0.008, 8, 160),
+            new THREE.MeshBasicMaterial({
+                color: i % 2 === 0 ? 0x00d9ff : 0xff36c8,
+                transparent: true,
+                opacity: 0.3
+            })
+        );
+        ring.position.copy(anchor);
+        ring.rotation.x = Math.random() * Math.PI;
+        ring.rotation.y = Math.random() * Math.PI;
+        scene.add(ring);
+        rings.push(ring);
+    }
 }
 
 /* ---------- Interactive orbiting satellites ---------- */
 function buildSatellites() {
     const count = 6;
-    const colors = [0xff6ec7, 0x48c6ef, 0x7c4dff, 0xffe66d, 0x6effb0, 0xff9f4d];
+    const colors = [0x00d9ff, 0xff36c8, 0x8b5cff, 0x55ddff, 0xff8fd8, 0x6effc9];
 
     for (let i = 0; i < count; i++) {
-        const geo = new THREE.IcosahedronGeometry(0.32, 0);
+        const geo = new THREE.IcosahedronGeometry(0.14, 0);
         const mat = new THREE.MeshStandardMaterial({
             color: colors[i % colors.length],
             emissive: colors[i % colors.length],
-            emissiveIntensity: 0.6,
+            emissiveIntensity: 0.7,
             metalness: 0.4,
             roughness: 0.3
         });
         const mesh = new THREE.Mesh(geo, mat);
 
         mesh.userData = {
-            radius: 5 + Math.random() * 2.5,
-            speed: 0.15 + Math.random() * 0.2,
+            radius: 2.6 + Math.random() * 1.4,
+            speed: 0.18 + Math.random() * 0.22,
             phase: Math.random() * Math.PI * 2,
             tilt: Math.random() * Math.PI,
             hoverScale: 1,
@@ -340,14 +339,13 @@ function buildComposer() {
 
     const bloom = new THREE.UnrealBloomPass(
         new THREE.Vector2(window.innerWidth, window.innerHeight),
-        1.2,   // strength
-        0.45,  // radius
-        0.15   // threshold
+        1.0,   // strength
+        0.5,   // radius
+        0.2    // threshold
     );
     composer.addPass(bloom);
     window.__bloom = bloom;
 
-    // Custom cinematic pass: vignette + chromatic aberration + film grain
     const cinematicShader = {
         uniforms: {
             tDiffuse: { value: null },
@@ -372,16 +370,16 @@ function buildComposer() {
         vec2 dir = uv - 0.5;
         float dist = length(dir);
 
-        vec2 offset = dir * dist * 0.0018;
+        vec2 offset = dir * dist * 0.0015;
         float r = texture2D(tDiffuse, uv - offset).r;
         float g = texture2D(tDiffuse, uv).g;
         float b = texture2D(tDiffuse, uv + offset).b;
         vec3 color = vec3(r, g, b);
 
-        float vignette = smoothstep(0.95, 0.35, dist);
+        float vignette = smoothstep(1.0, 0.4, dist);
         color *= vignette;
 
-        float grain = (fract(sin(dot(uv * uResolution.xy + uTime, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * 0.035;
+        float grain = (fract(sin(dot(uv * uResolution.xy + uTime, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * 0.03;
         color += grain;
 
         gl_FragColor = vec4(color, 1.0);
@@ -399,15 +397,15 @@ function bindEvents() {
     window.addEventListener('resize', onResize);
 
     window.addEventListener('mousemove', e => {
-        mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-        mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        mouseX = e.clientX / window.innerWidth - 0.5;
+        mouseY = e.clientY / window.innerHeight - 0.5;
 
         ndcMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
         ndcMouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
 
         if (dragging) {
-            targetRotY += (e.clientX - lastX) * 0.005;
-            targetRotX += (e.clientY - lastY) * 0.005;
+            targetRotY += (e.clientX - lastX) * 0.004;
+            targetRotX += (e.clientY - lastY) * 0.004;
             lastX = e.clientX; lastY = e.clientY;
         }
     });
@@ -417,29 +415,18 @@ function bindEvents() {
     });
     window.addEventListener('mouseup', () => dragging = false);
 
-    renderer.domElement.addEventListener('wheel', e => {
-        camDist = THREE.MathUtils.clamp(camDist + e.deltaY * 0.01, 6, 30);
-    }, { passive: true });
-
     renderer.domElement.addEventListener('click', () => {
         if (hoveredSatellite) hoveredSatellite.userData.pulse = 1;
     });
 
-    renderer.domElement.addEventListener('touchstart', e => {
-        dragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
-    }, { passive: true });
-    renderer.domElement.addEventListener('touchend', () => dragging = false);
-    renderer.domElement.addEventListener('touchmove', e => {
-        targetRotY += (e.touches[0].clientX - lastX) * 0.005;
-        targetRotX += (e.touches[0].clientY - lastY) * 0.005;
-        lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
-    }, { passive: true });
+    window.addEventListener('resize', onResize);
 }
 
 function onResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     composer.setSize(window.innerWidth, window.innerHeight);
     cinematicPass.uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
 }
@@ -453,34 +440,43 @@ function animate() {
 
     // Liquid sphere
     sphereMat.uniforms.uTime.value = t;
-    sphereGroup.rotation.y += 0.003;
+    sphereGroup.rotation.x = t * 0.18;
+    sphereGroup.rotation.y = t * 0.25;
 
-    // Wireframe shell breathes
-    const breathe = 1 + Math.sin(t * 1.4) * 0.04;
-    shellMesh.scale.set(breathe, breathe, breathe);
-    shellMesh.material.opacity = 0.4 + Math.sin(t * 1.4) * 0.15;
+    // Wireframe shell counter-rotates, breathes
+    wireSphere.rotation.x = -t * 0.12;
+    wireSphere.rotation.y = t * 0.18;
+    const breathe = 1 + Math.sin(t * 1.2) * 0.05;
+    wireSphere.scale.set(breathe, breathe, breathe);
+
+    // Float the sphere + shell together
+    sphereGroup.position.y = anchor.y + Math.sin(t * 0.7) * 0.15;
+    wireSphere.position.y = sphereGroup.position.y;
+
+    // Particle field
+    particles.material.uniforms.uTime.value = t;
+    particles.rotation.y = t * 0.025;
+    particles.rotation.x = Math.sin(t * 0.1) * 0.1;
 
     // Rings
-    ring1.rotation.z += 0.006;
-    ring2.rotation.z -= 0.004;
+    rings.forEach((ring, i) => {
+        ring.rotation.x += 0.0015 * (i + 1);
+        ring.rotation.y += 0.002 * (i + 1);
+        ring.rotation.z = Math.sin(t * 0.4 + i) * 0.25;
+    });
 
-    // Particle galaxy
-    particleSystem.material.uniforms.uTime.value = t;
-    particleSystem.rotation.y += 0.0009;
+    // Dynamic lights orbit the sphere
+    const [l1, l2] = window.__lights;
+    l1.position.set(anchor.x + Math.sin(t) * 4, Math.cos(t) * 3, Math.sin(t * 0.6) * 3);
+    l2.position.set(anchor.x + Math.cos(t * 0.7) * 4, Math.sin(t * 0.7) * 3, Math.cos(t * 0.5) * 3);
 
-    // Orbiting colored lights
-    const [l1, l2, l3] = window.__lights;
-    l1.position.set(Math.sin(t * 0.6) * 7, Math.cos(t * 0.4) * 5, Math.cos(t * 0.6) * 7);
-    l2.position.set(Math.cos(t * 0.5) * -7, Math.sin(t * 0.5) * 4, Math.sin(t * 0.3) * -7);
-    l3.position.set(Math.sin(t * 0.4) * 4, 6 + Math.sin(t * 0.7) * 2, Math.cos(t * 0.4) * -6);
-
-    // Interactive satellites: orbit + hover raycast + click pulse
+    // Interactive satellites
     updateSatellites(t);
 
-    // Cinematic pass time (film grain)
+    // Cinematic grain time
     cinematicPass.uniforms.uTime.value = t;
 
-    // Camera: mouse parallax + drag orbit + scroll-driven fly-through
+    // Camera: mouse drift + drag + scroll-driven dolly
     updateCamera(t);
 
     composer.render();
@@ -495,17 +491,17 @@ function updateSatellites(t) {
         const d = sat.userData;
         const angle = t * d.speed + d.phase;
         sat.position.set(
-            Math.cos(angle) * d.radius,
-            Math.sin(d.tilt) * 2 + Math.sin(angle * 1.3) * 1.2,
+            anchor.x + Math.cos(angle) * d.radius,
+            anchor.y + Math.sin(d.tilt) * 1.2 + Math.sin(angle * 1.3) * 0.8,
             Math.sin(angle) * d.radius
         );
 
-        const targetScale = (sat === hoveredSatellite ? 1.6 : 1) + d.pulse;
+        const targetScale = (sat === hoveredSatellite ? 1.8 : 1) + d.pulse;
         d.hoverScale += (targetScale - d.hoverScale) * 0.15;
         sat.scale.setScalar(d.hoverScale);
         d.pulse *= 0.9;
 
-        sat.material.emissiveIntensity = sat === hoveredSatellite ? 1.4 : 0.6;
+        sat.material.emissiveIntensity = sat === hoveredSatellite ? 1.6 : 0.7;
     });
 }
 
@@ -513,16 +509,17 @@ function updateCamera(t) {
     const scrollMax = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
     const scrollProgress = THREE.MathUtils.clamp(window.scrollY / scrollMax, 0, 1);
 
-    const autoY = t * 0.05;
-    const scrollAngle = scrollProgress * Math.PI * 1.4;
-    const dist = camDist + scrollProgress * 7;
-    const height = 2 + scrollProgress * 5;
+    // Base mouse drift + drag offset (smoothed)
+    const targetX = mouseX * 0.8 + targetRotY * 2;
+    const targetY = mouseY * 0.5 + targetRotX * 1.2;
+    camera.position.x += (targetX - camera.position.x) * 0.035;
+    camera.position.y += (-targetY - camera.position.y) * 0.035;
 
-    const angle = targetRotY + autoY + scrollAngle;
-    camera.position.x = Math.sin(angle) * dist + mouseX * 1.2;
-    camera.position.z = Math.cos(angle) * dist;
-    camera.position.y = height + Math.sin(targetRotX) * 4 - mouseY * 1.5;
-    camera.lookAt(0, 0, 0);
+    // Scroll-driven dolly + rise
+    const targetZ = camDist + scrollProgress * 6;
+    camera.position.z += (targetZ - camera.position.z) * 0.05;
+
+    camera.lookAt(0, scrollProgress * 1.5, 0);
 }
 
 /* ==========================================================
@@ -550,15 +547,43 @@ function runLoader() {
    SCROLL REVEAL
    ========================================================== */
 function initScrollReveal() {
-    const targets = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.15 });
+    const observer = new IntersectionObserver(
+        entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        },
+        { threshold: 0.15 }
+    );
 
-    targets.forEach(el => observer.observe(el));
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+/* ==========================================================
+   CARD 3D TILT ON HOVER
+   ========================================================== */
+function initCardTilt() {
+    document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const rotateX = ((y / rect.height) - 0.5) * -8;
+            const rotateY = ((x / rect.width) - 0.5) * 8;
+
+            card.style.transform = `
+        perspective(900px)
+        rotateX(${rotateX}deg)
+        rotateY(${rotateY}deg)
+        translateY(-8px)
+      `;
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
+        });
+    });
 }
