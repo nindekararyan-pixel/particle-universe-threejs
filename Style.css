@@ -388,4 +388,13 @@ main {
     transition-delay: 0.4s;
 }
 
- 
+/* ---------- Responsive tweaks ---------- */
+@media (max-width: 600px) {
+    main {
+        padding: 4vh 5vw 10vh;
+    }
+
+    .card {
+        padding: 22px 18px;
+    }
+}
