@@ -1,0 +1,110 @@
+/* ---------- Reset ---------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    background: #05010f;
+    color: #ffffff;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+
+/* ---------- Loader ---------- */
+#loader {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: #05010f;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    transition: opacity 0.7s ease, visibility 0.7s ease;
+}
+
+#loader.loaded {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-core {
+    position: relative;
+    width: 84px;
+    height: 84px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader-ring {
+    --p: 0;
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: conic-gradient(#ff6ec7 calc(var(--p) * 1%), rgba(255, 255, 255, 0.08) 0);
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 5px));
+    animation: loaderSpin 1.4s linear infinite;
+}
+
+@keyframes loaderSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loader-percent {
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.loader-label {
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* ---------- Canvas background ---------- */
+#bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: -1;
+}
+
+/* ---------- Hero ---------- */
+#hero {
+    position: absolute;
+    top: 30%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    pointer-events: none;
+    z-index: 2;
+}
+
+#overlay h1 {
+    font-size: clamp(2rem, 6vw, 3.4rem);
+    letter-spacing: 4px;
+    background: linear-gradient(90deg, #ff6ec7, #7c4dff, #48c6ef, #6effb0, #ff6ec7);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
