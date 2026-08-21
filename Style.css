@@ -309,32 +309,83 @@ section {
 .card {
     padding: 35px;
     min-height: 260px;
-    border: 1px solid rgba(139, 92, 255, .18);
     border-radius: 25px;
-    background: linear-gradient(160deg, rgba(18, 14, 40, .9), rgba(4, 5, 14, .95));
+    background: linear-gradient(160deg, rgba(20, 16, 44, .95), rgba(5, 6, 16, .97));
     backdrop-filter: blur(15px);
-    transition: transform .15s ease-out, border-color .45s, box-shadow .45s, background .45s;
+    transition: transform .15s ease-out, box-shadow .45s, background .45s;
     position: relative;
     overflow: hidden;
+    isolation: isolate;
 }
 
-.card::before {
+/* animated glowing border, unique hue per card */
+.card::after {
     content: "";
     position: absolute;
-    width: 220px;
-    height: 220px;
-    background: radial-gradient(circle, #8b5cff, transparent 70%);
-    filter: blur(70px);
-    opacity: .22;
-    top: -110px;
-    right: -110px;
+    inset: 0;
+    border-radius: 25px;
+    padding: 1.5px;
+    background: conic-gradient(from 0deg, var(--accent, #00d9ff), transparent 35%, var(--accent, #00d9ff) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: .55;
+    animation: cardSpin 5s linear infinite;
+    z-index: -1;
     pointer-events: none;
 }
 
+@keyframes cardSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* colorful glow blob unique per card */
+.card::before {
+    content: "";
+    position: absolute;
+    width: 240px;
+    height: 240px;
+    background: radial-gradient(circle, var(--accent, #8b5cff), transparent 70%);
+    filter: blur(65px);
+    opacity: .3;
+    top: -120px;
+    right: -120px;
+    pointer-events: none;
+}
+
+.card:nth-child(1) {
+    --accent: #00d9ff;
+}
+
+.card:nth-child(2) {
+    --accent: #ff36c8;
+}
+
+.card:nth-child(3) {
+    --accent: #8b5cff;
+}
+
+.card:nth-child(4) {
+    --accent: #6effc9;
+}
+
+.card:nth-child(5) {
+    --accent: #ff9f4d;
+}
+
+.card:nth-child(6) {
+    --accent: #ffe066;
+}
+
 .card:hover {
-    border-color: rgba(0, 217, 255, .4);
-    background: linear-gradient(160deg, rgba(24, 18, 52, .95), rgba(6, 7, 18, .98));
-    box-shadow: 0 25px 80px rgba(0, 0, 0, .55), 0 0 40px rgba(0, 217, 255, .12);
+    background: linear-gradient(160deg, rgba(26, 20, 56, .98), rgba(7, 8, 20, 1));
+    box-shadow: 0 25px 80px rgba(0, 0, 0, .55), 0 0 50px -10px var(--accent, #00d9ff);
+}
+
+.card:hover::after {
+    opacity: 1;
 }
 
 .icon {
@@ -344,8 +395,9 @@ section {
     display: grid;
     place-items: center;
     font-size: 25px;
-    background: rgba(139, 92, 255, .12);
-    border: 1px solid rgba(139, 92, 255, .2);
+    background: color-mix(in srgb, var(--accent, #8b5cff) 18%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent, #8b5cff) 45%, transparent);
+    box-shadow: 0 0 20px -6px var(--accent, #8b5cff);
     margin-bottom: 25px;
 }
 
