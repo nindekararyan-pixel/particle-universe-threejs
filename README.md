@@ -1,9 +1,6 @@
-# particle-universe-threejs
-Interactive 3D particle universe built with Three.js — GLSL liquid-shader sphere, GPU particles, cinematic bloom, and scroll-controlled camera.
+# 3D Motion — Advanced Three.js Experience
 
-# Particle Universe — Three.js
-
-Interactive 3D particle universe built with Three.js — a GLSL liquid-shader sphere, GPU-animated particles, cinematic bloom, and a scroll-controlled camera.
+A shader-driven 3D landing page built with Three.js — a liquid-distortion sphere, GPU-animated particles, interactive orbiting satellites, and cinematic post-processing, wrapped in a polished, scroll-reveal marketing UI.
 
 ![Three.js](https://img.shields.io/badge/Three.js-r128-black?logo=three.js)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
@@ -14,34 +11,29 @@ Interactive 3D particle universe built with Three.js — a GLSL liquid-shader sp
 
 ## ✨ Overview
 
-A fully real-time WebGL scene — no pre-rendered video. Every effect (the sphere's liquid surface, particle drift, glow, and camera motion) is computed live on the GPU, frame by frame.
+Every visual effect on this page runs live on the GPU — nothing is a pre-rendered video or static image. The liquid sphere deforms in real time, the particle field drifts continuously, and the camera responds to both your mouse and your scroll position as you move through the page.
 
-## 🚀 The Advanced Additions
+## 🚀 Features
 
-- **GLSL shaders / liquid distortion** — the sphere's surface deforms in real time using simplex noise in a custom vertex shader, not a static mesh.
-- **Interactive 3D models** — six small orbiting satellites you can hover (raycasted, they light up and scale) and click (they pulse).
-- **Scroll-controlled camera** — as you scroll, the camera dollies out, rises, and rotates around the scene, blended smoothly with mouse parallax and drag.
-- **Cinematic post-processing** — `UnrealBloomPass` plus a custom `ShaderPass` for vignette, chromatic aberration, and film grain.
-- **Custom loading animation** — a conic-gradient progress ring with a live percentage counter, fading out once ready.
-
-## 🪐 Core Scene
-
-- Liquid-distorted sphere with a fresnel-lit neon rim
-- Pulsing wireframe energy shell that breathes independently around the core
-- 3,000-particle galaxy, animated entirely on the GPU via shader displacement
-- Two counter-rotating rings
-- Three dynamic colored point lights orbiting the scene
-- Volumetric exponential fog for depth
-- Mouse-responsive camera (parallax + drag-to-rotate + scroll wheel zoom)
-- Continuous, seamless animation loop
+- **Liquid Shader Sphere** — a custom GLSL vertex shader deforms the core in real time using simplex noise, with a fresnel-lit neon rim in the fragment shader.
+- **Wireframe Energy Shell** — a counter-rotating, breathing wireframe shell wraps the liquid core.
+- **3,000-Particle Field** — a GPU-animated point cloud drifts through space using per-vertex shader displacement.
+- **Floating Rings** — five independently rotating rings orbit the central sphere.
+- **Dynamic Lighting** — colored point lights orbit the scene, catching the shell and rings as they pass.
+- **Interactive Satellites** — six small orbiting models glow and scale on raycasted hover, and pulse on click.
+- **Cinematic Post-Processing** — `UnrealBloomPass` plus a custom `ShaderPass` for vignette, chromatic aberration, and film grain.
+- **Mouse & Scroll Camera** — the camera drifts with your cursor and dollies through the scene as you scroll.
+- **Custom Loading Animation** — a conic-gradient progress ring with a live percentage counter, fading out once ready.
+- **Scroll-Reveal UI** — sections and cards fade and rise into view via `IntersectionObserver`.
+- **3D Card Tilt** — feature cards tilt toward the cursor on hover, each with its own accent color and animated glowing border.
 
 ## 📂 Project Structure
 
 ```
-particle-universe-threejs/
-├── index.html    # Page structure, loader markup, CDN script tags
-├── style.css     # Loader, hero, glass cards, scroll-reveal, responsive layout
-├── script.js     # Full Three.js scene, shaders, post-processing, camera logic
+3d-motion-threejs/
+├── index.html    # Page structure: nav, hero, feature cards, CTA, footer, loader
+├── style.css     # All styling: hero, cards, CTA, loader, responsive layout
+├── script.js     # Full Three.js scene, shaders, post-processing, camera + UI logic
 └── README.md
 ```
 
@@ -54,14 +46,16 @@ particle-universe-threejs/
 
 ## ▶️ Running Locally
 
-The post-processing addons are loaded from a CDN at runtime, which some browsers block over CORS when a file is opened directly (`file://`). Serve the folder with a local server instead:
+The post-processing addons load from a CDN at runtime, which some browsers block over CORS when the file is opened directly (`file://`). Serve the folder with a local server instead:
 
 **Option 1 — Node**
+
 ```bash
 npx serve .
 ```
 
 **Option 2 — Python**
+
 ```bash
 python3 -m http.server 8000
 ```
@@ -73,18 +67,18 @@ Then open the printed local URL (e.g. `http://localhost:8000`) in your browser.
 
 ## 🎮 Controls
 
-| Action | Effect |
-|---|---|
-| Move mouse | Camera parallax tilt |
-| Click + drag | Rotate the scene |
-| Scroll wheel | Zoom camera distance |
-| Scroll page | Fly-through camera animation |
-| Hover a satellite | Glow + scale up |
-| Click a satellite | Pulse animation |
+| Action               | Effect                      |
+| -------------------- | --------------------------- |
+| Move mouse           | Camera parallax drift       |
+| Click + drag         | Rotate the camera           |
+| Scroll page          | Dolly/rise camera animation |
+| Hover a satellite    | Glow + scale up             |
+| Click a satellite    | Pulse animation             |
+| Hover a feature card | 3D tilt + glowing border    |
 
 ## ⚡ Performance Note
 
-This scene is GPU-intensive (a 5-level subdivided noise-displaced sphere, 3,000 shader-driven particles, bloom, and a full-screen cinematic shader pass every frame). It runs smoothly on modern discrete or integrated GPUs, but may lag on older hardware or budget mobile devices.
+This scene is GPU-intensive: a 5-level subdivided noise-displaced sphere, 3,000 shader-driven particles, bloom, and a full-screen cinematic shader pass every frame. It runs smoothly on modern discrete or integrated GPUs, but may lag on older hardware or budget mobile devices.
 
 ## 📄 License
 
